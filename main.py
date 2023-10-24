@@ -1,5 +1,4 @@
-import asyncio
-import logging
+import asyncio, logging
 from threading import Thread 
 
 from aiogram import Bot, Dispatcher
@@ -7,9 +6,11 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.utils.chat_action import ChatActionMiddleware
 
-import config
+import config, db, db_runner
 from handlers import router
 import utils
+
+import datetime
 
 async def main():
     bot = Bot(token=config.BOT_TOKEN, parse_mode=ParseMode.HTML)
@@ -20,6 +21,9 @@ async def main():
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
 def initialize():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(db.init())
+    loop.close()
     thread = Thread(target=utils.jettons_count_update)
     thread.start()
 

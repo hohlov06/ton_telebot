@@ -7,3 +7,5 @@ class Gen(StatesGroup):
     help = State()
     projects_list = State()
     initial = State()
+    dedust_chart = State()
+    ston_chart = State()

@@ -14,9 +14,8 @@ exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти 
 iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="menu")]])
 
 markets = [
-    [InlineKeyboardButton(text="LAVE", callback_data="LAVE_chart")],
-    [InlineKeyboardButton(text="FNZ", callback_data="FNZ_chart")],
-    [InlineKeyboardButton(text="stTON", callback_data="stTON_chart")]
+    [InlineKeyboardButton(text="DeDust", callback_data="DeDust_chart")],
+    [InlineKeyboardButton(text="Ston", callback_data="Ston_chart")]
 ]
 markets = InlineKeyboardMarkup(inline_keyboard=markets)
 

@@ -1,22 +1,20 @@
 import matplotlib.pyplot as plt
-import pandas as pd
+from matplotlib.dates import DateFormatter
 import io
 
 def chart_buffer(X: list, Y: list, info: dict):
     fig, ax = plt.subplots()
-    ax.plot(X, Y)
-    ax.set_xlabel('Time, days')
+    ax.set_xlabel('Time')
     ax.set_ylabel('Price, USD')
+    myFmt = DateFormatter("%D %H:%M:%S")
+    ax.xaxis.set_major_formatter(myFmt)
+    ax.plot(X, Y)
     if 'title' in info:
         plt.title(info['title'])
+    fig.autofmt_xdate()
     plt.grid()
     buf = io.BytesIO()
     buf.name = "chart.png"
     fig.savefig(buf, format='png')
     buf.seek(0)
     return buf
-
-def get_data_from_csv(column):
-    columns = ["Date","Open","High","Low","Close","Adj Close","Volume"]
-    df = pd.read_csv("data/BTC-USD.csv", usecols=columns)
-    return df.iloc[:, column].to_list()

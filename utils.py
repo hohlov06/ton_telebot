@@ -1,4 +1,4 @@
-import logging, requests, json
+import requests, json
 import config
 import time
 
@@ -104,3 +104,15 @@ def jettons_count_update():
     while True:
         jettons_count = check_jettons_count()
         time.sleep(60 * 60 * 24)
+
+def get_ston_prices():
+    ston_url = "https://api.ston.fi/v1/assets"
+    response = requests.get(ston_url)
+    jresponse = json.loads(response.text)
+    return jresponse["asset_list"]
+
+def get_dedust_prices():
+    dedust_url = "https://api.dedust.io/v2/pools"
+    response = requests.get(dedust_url)
+    jresponse = json.loads(response.text)
+    return jresponse
