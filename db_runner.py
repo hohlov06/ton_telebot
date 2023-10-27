@@ -6,45 +6,58 @@ async def update_stock_prices():
     while True:
         cur_datetime = datetime.datetime.today()
         next_datetime = cur_datetime + datetime.timedelta(minutes=1)
-        ston_prices = utils.get_ston_prices()
-        dedust_prices = utils.get_dedust_prices()
+        ston_failed =  False
+        dedust_failed = False
+        try:
+            ston_prices = utils.get_ston_prices()
+        except:
+            print('loading from ston error ', cur_datetime)
+            ston_failed = True
         
-        for item in ston_prices:
-            if 'dex_usd_price' not in item:
-                continue
-            contact_address = item['contract_address']
-            dex_price = float(item['dex_usd_price'])
-            ston_jetton, _ = await db.StonJetton.get_or_create(address=contact_address, name = item["display_name"])
+        try:
+            dedust_prices = utils.get_dedust_prices()
+        except:
+            print('loading from dedust error ', cur_datetime)
+            dedust_failed = True
 
-            price_item = await db.StonStockPrice.create(jetton_id = ston_jetton.id,
-                                    time = cur_datetime,
-                                    price = dex_price)
-            
-            await ston_jetton.save()
-            await price_item.save()
-
-        for item in dedust_prices:
-            price = item['lastPrice']
-            if not price:
-                continue
-            address = item['address']
-
-            for asset in item['assets']:
-                if 'address' in asset:
-                    cur_address = asset['address']
-                else:
-                    cur_address = address
-
-                metadata = asset['metadata']
-                if not metadata:
+        if not ston_failed:
+            for item in ston_prices:
+                if 'dex_usd_price' not in item:
                     continue
+                contact_address = item['contract_address']
+                dex_price = float(item['dex_usd_price'])
+                ston_jetton, _ = await db.StonJetton.get_or_create(address=contact_address, name = item["display_name"])
 
-                dedust_jetton, _ = await db.DedustJetton.get_or_create(address=cur_address, name = metadata["name"])
-                price_item = await db.DedustStockPrice.create(jetton_id = dedust_jetton.id,
-                                          time = cur_datetime,
-                                          price = price)
-                dedust_jetton.save()
-                price_item.save()
+                price_item = await db.StonStockPrice.create(jetton_id = ston_jetton.id,
+                                    time = cur_datetime,
+                                    price = dex_price) # TODO save average for 5m, 15m, 1h, 4h, 12h, 1d            
+                await ston_jetton.save()
+                await price_item.save()
+
+        if not dedust_failed:
+            for item in dedust_prices:
+                price = item['lastPrice']
+                if not price:
+                    continue
+                address = item['address']
+
+                for asset in item['assets']:
+                    if 'address' in asset:
+                        cur_address = asset['address']
+                    else:
+                        cur_address = address
+
+                    metadata = asset['metadata']
+                    if not metadata:
+                        continue
+
+                    dedust_jetton, _ = await db.DedustJetton.get_or_create(address=cur_address, name = metadata["name"])
+                    price_item = await db.DedustStockPrice.create(jetton_id = dedust_jetton.id,
+                                            time = cur_datetime,
+                                            price = price) # TODO save average for 5m, 15m, 1h, 4h, 12h, 1d
+                    await dedust_jetton.save()
+                    await price_item.save()
+
         print(cur_datetime, " saved to DB")
         secs = (next_datetime - datetime.datetime.today()).total_seconds()
         if secs > 0:

@@ -15,7 +15,8 @@ iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀
 
 markets = [
     [InlineKeyboardButton(text="DeDust", callback_data="DeDust_chart")],
-    [InlineKeyboardButton(text="Ston", callback_data="Ston_chart")]
+    [InlineKeyboardButton(text="Ston", callback_data="Ston_chart")],
+    [InlineKeyboardButton(text="Настройки графика", callback_data="time_period_settings")]
 ]
 markets = InlineKeyboardMarkup(inline_keyboard=markets)
 
@@ -46,3 +47,57 @@ def project_menu_builder():
         menu_builder.button(text=utils.project_data[i][0], callback_data=f"projbutton_{i}")
     menu_builder.adjust(3)
     return menu_builder
+
+def dedust_charts_buttons_builder(info: list):
+    builder = InlineKeyboardBuilder()
+    for item in info:
+        text = item['name']
+        callback_data = "dedustchart_{}".format(item['address'])
+        builder.button(text=text, callback_data=callback_data)
+    builder.adjust(2)
+    return builder
+
+def ston_charts_buttons_builder(info: list):
+    builder = InlineKeyboardBuilder()
+    for item in info:
+        text = item['name']
+        callback_data = "stonchart_{}".format(item['address'])
+        builder.button(text=text, callback_data=callback_data)
+    builder.adjust(2)
+    return builder
+
+time_period_settings = [
+    [InlineKeyboardButton(text="1 день", callback_data="period_1_day"),
+    InlineKeyboardButton(text="5 дней", callback_data="period_5_days"),
+    InlineKeyboardButton(text="3 месяца", callback_data="period_3_months")]
+]
+time_period_settings = InlineKeyboardMarkup(inline_keyboard=time_period_settings)
+
+time_frequency_settings_1_day = [
+    [InlineKeyboardButton(text="1 минута", callback_data="frequency_1_minutes"),
+    InlineKeyboardButton(text="5 минут", callback_data="frequency_5_minutes"),
+    InlineKeyboardButton(text="15 минут", callback_data="frequency_15_minutes"),
+    InlineKeyboardButton(text="1 час", callback_data="frequency_1_hours")]
+]
+time_frequency_settings_1_day = InlineKeyboardMarkup(inline_keyboard=time_frequency_settings_1_day)
+timelist_1_day = ("1_minutes", "5_minutes", "15_minutes", "1_hours")
+
+time_frequency_settings_5_days = [
+    [
+    InlineKeyboardButton(text="5 минут", callback_data="frequency_5_minutes"),
+    InlineKeyboardButton(text="15 минут", callback_data="frequency_15_minutes"),
+    InlineKeyboardButton(text="1 час", callback_data="frequency_1_hours"),
+    InlineKeyboardButton(text="4 часа", callback_data="frequency_4_hours")]
+]
+time_frequency_settings_5_days = InlineKeyboardMarkup(inline_keyboard=time_frequency_settings_5_days)
+timelist_5_days = ("5_minutes", "15_minutes", "1_hours", "4_hours")
+
+time_frequency_settings_3_months = [
+    [InlineKeyboardButton(text="1 час", callback_data="frequency_1_hours"),
+    InlineKeyboardButton(text="4 часа", callback_data="frequency_4_hours"),
+    InlineKeyboardButton(text="12 часов", callback_data="frequency_12_hours"),
+    InlineKeyboardButton(text="1 день", callback_data="frequency_1_day")]
+]
+time_frequency_settings_3_months = InlineKeyboardMarkup(inline_keyboard=time_frequency_settings_3_months)
+timelist_3_months = ("1_hours", "4_hours", "12_hours", "1_day")
+timedict = {"1_day" : timelist_1_day, "5_days": timelist_5_days, "3_months": timelist_3_months}

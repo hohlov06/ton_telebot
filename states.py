@@ -9,3 +9,5 @@ class Gen(StatesGroup):
     initial = State()
     dedust_chart = State()
     ston_chart = State()
+    time_period_settings = State()
+    time_frequency_settings = State()
